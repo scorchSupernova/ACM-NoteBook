@@ -1,0 +1,158 @@
+//-----------------
+//author: d0uch3b4g
+//-----------------
+#include "bits/stdc++.h"
+#define SIZE          1000005
+#define REM           1000000007
+#define PI            2*acos(0.0)
+#define L             long
+#define LL            long long
+#define UL            unsigned long
+#define ULL           unsigned long long
+#define TERMINATE     return 0
+#define FAST          ios_base::sync_with_stdio(false);cin.tie(NULL)
+using namespace std;
+template <class T> inline T bigmod1(T p,T e,T M){
+    LL ret=1;
+    for(; e > 0; e >>= 1){
+        if(e & 1) ret = (ret * p) % M;
+        p = (p * p) % M;
+    } return (T)ret;
+}
+ 
+template <class T> inline T gcode(T a,T b){if(b==0)return a;return gcode(b,a%b);}
+template <class T> inline T modularinv(T a,T M){return bigmod1(a,M-2,M);}
+ 
+bool SA(const pair<string,string> &a, const pair<string,string> &b){
+   return a.second<b.second;
+}
+bool FA(const pair<string,string> &a, const pair<string,string> &b){
+   return a.first<b.first;
+}
+bool SD(const pair<LL,LL> &a, const pair<LL,LL> &b){
+   return a.second>b.second;
+}
+bool FD(const pair<int,int> &a, const pair<int,int> &b){
+   return a.first>b.first;
+}
+//int dirA[8]={0,0,1,-1,1,-1,1,-1};
+//int dirB[8]={1,-1,0,0,1,-1,-1,1};
+//int dirA[4]={0,0,1,-1};
+//int dirB[4]={1,-1,0,0};
+//int kingsA[8]={0,0,1,-1,-1,1,-1,1};  //Kings Move
+//int kingsB[8]={-1,1,0,0,1,1,-1,-1};  //Kings Move
+//int knightsA[8]={-2,-2,-1,-1,1,1,2,2};  //Knights Move
+//int knightsB[8]={-1,1,-2,2,-2,2,-1,1};  //Knights Move
+
+vector<int> adj[SIZE];
+int col[SIZE],c[SIZE],par[SIZE],node[SIZE],cnt,Sub[SIZE],sz,countt[SIZE],res[SIZE];
+
+struct QQuery{
+	int id,l,r,idx;
+	bool operator<(const QQuery &extra) const{
+		int mine=l/sz,oth=extra.l/sz;
+		if(mine==oth) return r<extra.r;
+		else return mine<oth;
+	}
+}query[SIZE];
+
+void add(int a){
+	int val=par[a];
+	c[col[val]]++;
+	countt[c[col[val]]]++;
+}
+
+void rem(int a){
+	int val=par[a];
+	countt[c[col[val]]]--;
+	c[col[val]]--;
+}
+
+void dfs(int str){
+	cnt++;
+	node[str]=cnt;
+	par[cnt]=str;
+	Sub[str]=1;
+	for(int i=0;i<adj[str].size();i++){
+		int ch=adj[str][i];
+		if(!Sub[ch]){
+			dfs(ch);
+			Sub[str]+=Sub[ch];
+		}
+	}
+}
+int main(){
+	FAST;
+	//freopen("test.in","r",stdin);
+	int a,b;
+	cin>>a>>b;
+	for(int i=1;i<=a;i++){
+		cin>>col[i];
+	}
+	for(int i=0;i<a-1;i++){
+		int u,v;
+		cin>>u>>v;
+		adj[u].push_back(v);
+		adj[v].push_back(u);
+	}
+	dfs(1);
+	sz=sqrt(a);
+//	cout<<endl<<endl;
+	for(int i=1;i<=b;i++){
+		int x,y;
+		cin>>x>>y;
+		//cout<<node[x]<<" "<<Sub[x]+node[x]-1<<endl;
+		query[i].l=node[x],query[i].r=node[x]+Sub[x]-1,query[i].idx=y,query[i].id=i;
+	}
+	sort(query+1,query+b+1);
+	int L1=1,R=0;
+	for(int i=1;i<=b;i++){
+	//	cout<<query[i].l<<" "<<query[i].r<<" "<<query[i].idx<<endl;
+		int ind=query[i].id;
+		while(L1<query[i].l){
+			rem(L1++);
+		}
+		while(L1>query[i].l){
+			add(--L1);
+		}
+		while(R<query[i].r){
+			add(++R);
+		}
+		while(R>query[i].r){
+			rem(R--);
+		}
+		res[ind]=countt[query[i].idx];
+	}
+	for(int i=1;i<=b;i++) cout<<res[i]<<"\n";	
+	cerr<<"time elapsed:"<<clock()*1000.0/CLOCKS_PER_SEC<<"ms"<<"\n";
+	return 0;
+}
+
+/*
+          THE POT
+       -----TOOL-----
+Who are you to wave your finger?
+You must have been out your head
+Eye hole deep in muddy waters
+You practically raised the dead
+Rob the grave to snow the cradle
+Then burn the evidence down
+Soapbox, house of cards, and glass
+So don't go tossin' your stones around
+You must have been high
+You must have been high
+You must have been
+Foot in mouth, and head up ass
+So what you talkin' 'bout?
+Difficult to dance 'round this one
+Till you pull it out, boy
+You must have been so high
+You must have been so high
+Steal, burrow, reefer
+Save your shady inference
+Kangaroo done hung the juror with the innocent
+Now you're weeping shades of cozen indigo
+Got lemon juice up in your eye
+When you pissed all over my black kettle
+You must have been high, high
+You must have been high, high    :D :D :D*/
