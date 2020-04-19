@@ -1,0 +1,66 @@
+int ar[SIZE],tree[SIZE];
+void update(int idx,int x,int n){
+	while(idx<=n){
+		tree[idx]+=x;
+		idx+=idx&(-idx);
+	}
+}
+void updatee(int idx,int x,int n){
+	while(idx<=n){
+		tree[idx]-=x;
+		idx+=idx&(-idx);
+	}
+}
+LL solve(int idd){
+	LL sum=0;
+	while(idd>0){
+		sum+=tree[idd];
+		idd-=idd&(-idd);
+	}
+	return sum;
+}
+int main(){
+	//Khela_Hok();
+	Khela_Hobe();
+	int t,cas=1;
+	scanf("%d",&t);
+	while(t--){
+		for(int i=1;i<=SIZE;i++){
+			ar[i]=0;
+			tree[i]=0;
+		}
+		int a,b;
+		scanf("%d%d",&a,&b);
+		for(int i=1;i<=a;i++){
+			scanf("%d",&ar[i]);
+			update(i,ar[i],a);
+		}
+		printf("Case %d:\n",cas++);
+		while(b--){
+			int id;
+			scanf("%d",&id);
+			if(id==1){
+				int k;
+				scanf("%d",&k);
+				//cout<<tree[2]<<endl;
+				printf("%d\n",ar[k+1]);
+				int val=ar[k+1];
+				ar[k+1]=0;
+				updatee(k+1,val,a);
+			}
+			else if(id==2){
+				int k,kk;
+				scanf("%d%d",&k,&kk);
+				ar[k+1]+=kk;
+				update(k+1,kk,a);
+			}
+			else if(id==3){
+				int k,kk;
+				scanf("%d%d",&k,&kk);
+				int res=solve(kk+1)-solve(k);
+				printf("%d\n",res);
+			}
+		}
+	}
+	return 0;
+}
