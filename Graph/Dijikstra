@@ -1,0 +1,95 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long LL;
+typedef pair<int,int> ii;
+typedef vector<ii> vii;
+
+typedef bool (*comp)(ii,ii);
+
+bool compare(ii a,ii b){
+	return a.second>b.second;
+}
+const int sz=2000005;
+vector<pair<LL,LL> > adj[sz];
+LL dis[sz];
+//vector<int> path;
+//bool vis[sz];
+
+map<string,int> mp;
+void fun(int str,int end){
+	//memset(vis,false,sizeof(vis));
+	dis[str]=0;
+	priority_queue<ii,vii,comp> pq(compare);
+	pq.push(make_pair(str,0));
+	while(!pq.empty()){
+		int ver=pq.top().first;
+		if(ver==end){
+			printf("%lld\n",dis[end]);
+			break;
+		}
+		pq.pop();
+		for(int i=0;i<adj[ver].size();i++){
+			int v=adj[ver][i].first;
+			int v1=adj[ver][i].second;
+			//if(!vis[v]){
+			//cout<<v1<<" "<<v<<endl;
+			//cout<<dis[ver]+v1<<" "<<dis[v]<<endl;
+			//cout<<ver<<"-->"<<v<<" "<<v1<<endl;
+			if(dis[ver]+v1<dis[v]){
+				dis[v]=dis[ver]+v1;
+				//cout<<ver<<"-->"<<v<<" "<<dis[v]<<endl;
+				//cout<<dis[v]<<" "<<v<<endl;
+				pq.push(make_pair(v,dis[v]));
+			}
+		}
+	}
+	//cout<<0<<endl;
+}
+int main(){
+	//ios_base::sync_with_stdio(false);
+	//cin.tie(NULL);
+	int t;
+	scanf("%d",&t);
+	while(t--){
+		int n;
+		scanf("%d",&n);
+		getchar();
+		mp.clear();
+		for(int i=1;i<=n;i++){
+			string s;
+			cin>>s;
+			mp[s]=i;
+			int m;
+			scanf("%d",&m);
+			for(int j=0;j<m;j++){
+				int ind,cst;
+				scanf("%d%d",&ind,&cst);
+				adj[i].push_back(make_pair(ind,cst));
+				//adj[ind].push_back(make_pair(i,cst));
+			}
+		}
+		int q;
+		scanf("%d",&q);
+		getchar();
+		while(q--){
+			string s1,s2;
+			cin>>s1>>s2;
+			int val=mp[s1],val1=mp[s2];
+			//cout<<val<<" "<<val1<<endl;
+			for(int i=1;i<=sz;i++){
+				//adj[i].clear();
+				dis[i]=INT_MAX;
+			}
+			fun(val,val1);
+			/*for(int i=0;i<path.size();i++){
+				cout<<path[i]<<" ";
+			}*/
+		}
+		for(int i=1;i<=sz;i++){
+				adj[i].clear();
+				//dis[i]=INT_MAX;
+			}
+	}
+
+	return 0;
+}
